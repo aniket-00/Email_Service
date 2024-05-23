@@ -1,0 +1,36 @@
+{
+  "title": "Maximum Sum of Non-Adjacent Subarray",
+  "description": "Given an array of integers, find the maximum sum of a subarray with the constraint that no two elements are adjacent in the given array.",
+  "examples": [
+    {
+      "input": "nums = [3, 2, 5, 10, 7]",
+      "output": "15",
+      "explanation": "The subarray with maximum sum is [3, 10], which gives a sum of 3 + 10 = 13. Another subarray with the maximum sum is [2, 10, 7], which gives a sum of 2 + 10 + 7 = 19."
+    },
+    {
+      "input": "nums = [3, 2, 7, 10]",
+      "output": "13",
+      "explanation": "The subarray with maximum sum is [3, 10], which gives a sum of 3 + 10 = 13."
+    },
+    {
+      "input": "nums = [5, 5, 10, 100, 10, 5]",
+      "output": "110",
+      "explanation": "The subarray with maximum sum is [5, 100, 5], which gives a sum of 5 + 100 + 5 = 110."
+    }
+  ],
+  "constraints": [
+    "1 <= nums.length <= 10^5",
+    "-10^4 <= nums[i] <= 10^4"
+  ],
+  "answers": {
+    "python": {
+      "code": "def max_sum_non_adjacent(nums):\n    if not nums:\n        return 0\n\n    prev1 = 0\n    prev2 = 0\n\n    for num in nums:\n        current = max(prev1, prev2 + num)\n        prev2 = prev1\n        prev1 = current\n\n    return prev1\n\n# Test cases\nprint(max_sum_non_adjacent([3, 2, 5, 10, 7]))  # Output: 15\nprint(max_sum_non_adjacent([3, 2, 7, 10]))  # Output: 13\nprint(max_sum_non_adjacent([5, 5, 10, 100, 10, 5]))  # Output: 110",
+      "explanation": "The function max_sum_non_adjacent calculates the maximum sum of non-adjacent elements in an array. It uses two variables, prev1 and prev2, to keep track of the maximum sum up to the previous two elements. In each iteration, it updates the current maximum sum by comparing the sum of the current element and prev2 with prev1, ensuring no two adjacent elements are selected."
+    },
+    "cpp": {
+      "code": "#include <vector>\n#include <algorithm>\n#include <iostream>\n\nint maxSumNonAdjacent(std::vector<int>& nums) {\n    if (nums.empty()) return 0;\n\n    int prev1 = 0;\n    int prev2 = 0;\n\n    for (int num : nums) {\n        int current = std::max(prev1, prev2 + num);\n        prev2 = prev1;\n        prev1 = current;\n    }\n\n    return prev1;\n}\n\n// Test cases\nint main() {\n    std::vector<int> nums1 = {3, 2, 5, 10, 7};\n    std::vector<int> nums2 = {3, 2, 7, 10};\n    std::vector<int> nums3 = {5, 5, 10, 100, 10, 5};\n\n    std::cout << maxSumNonAdjacent(nums1) << std::endl;  // Output: 15\n    std::cout << maxSumNonAdjacent(nums2) << std::endl;  // Output: 13\n    std::cout << maxSumNonAdjacent(nums3) << std::endl;  // Output: 110\n\n    return 0;\n}",
+      "explanation": "The function maxSumNonAdjacent calculates the maximum sum of non-adjacent elements in a vector of integers. It uses two variables, prev1 and prev2, to keep track of the maximum sum up to the previous two elements. In each iteration, it updates the current maximum sum by comparing the sum of the current element and prev2 with prev1, ensuring no two adjacent elements are selected."
+    }
+  },
+  "sent": "false"
+}

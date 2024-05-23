@@ -1,0 +1,38 @@
+{
+  "title": "Longest Substring with At Most K Distinct Characters",
+  "description": "Given a string s and an integer k, return the length of the longest substring of s that contains at most k distinct characters.",
+  "examples": [
+    {
+      "input": {
+        "s": "eceba",
+        "k": 2
+      },
+      "output": "3",
+      "explanation": "The longest substring with at most 2 distinct characters is 'ece', which has a length of 3."
+    },
+    {
+      "input": {
+        "s": "aa",
+        "k": 1
+      },
+      "output": "2",
+      "explanation": "The longest substring with at most 1 distinct character is 'aa', which has a length of 2."
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 5 * 10^4",
+    "0 <= k <= 50",
+    "s consists of English letters only."
+  ],
+  "answers": {
+    "python": {
+      "code": "def length_of_longest_substring(s: str, k: int) -> int:\n    char_count = {}\n    max_length = 0\n    left = 0\n\n    for right, char in enumerate(s):\n        char_count[char] = char_count.get(char, 0) + 1\n\n        while len(char_count) > k:\n            char_count[s[left]] -= 1\n            if char_count[s[left]] == 0:\n                del char_count[s[left]]\n            left += 1\n\n        max_length = max(max_length, right - left + 1)\n\n    return max_length",
+      "explanation": "The function length_of_longest_substring calculates the length of the longest substring of s that contains at most k distinct characters. It uses a sliding window approach to maintain a window containing at most k distinct characters."
+    },
+    "cpp": {
+      "code": "#include <string>\n#include <unordered_map>\n#include <algorithm>\n\nint lengthOfLongestSubstring(std::string s, int k) {\n    std::unordered_map<char, int> char_count;\n    int max_length = 0;\n    int left = 0;\n\n    for (int right = 0; right < s.length(); ++right) {\n        char_count[s[right]]++;\n\n        while (char_count.size() > k) {\n            char_count[s[left]]--;\n            if (char_count[s[left]] == 0) {\n                char_count.erase(s[left]);\n            }\n            left++;\n        }\n\n        max_length = std::max(max_length, right - left + 1);\n    }\n\n    return max_length;\n}",
+      "explanation": "The function lengthOfLongestSubstring calculates the length of the longest substring of s that contains at most k distinct characters. It uses a sliding window approach to maintain a window containing at most k distinct characters."
+    }
+  },
+  "sent": "false"
+}

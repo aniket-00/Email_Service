@@ -1,0 +1,11 @@
+flask
+flask_login
+# stripe
+mime
+pymongo
+python-dotenv
+flask_pymongo
+# werkzeug
+# itsdangerous
+jinja2
+# apscheduler

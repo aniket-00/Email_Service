@@ -1,0 +1,61 @@
+<!-- Add Stripe.js script in your HTML -->
+<!-- <script src="https://js.stripe.com/v3/"></script> -->
+
+<!-- Create a button to trigger Stripe Checkout -->
+<!-- <button id="checkout-button">Subscribe</button> -->
+
+<!-- <script>
+  // Create a Stripe Checkout session when the button is clicked
+  document.getElementById('checkout-button').addEventListener('click', function() {
+    fetch('/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(session) {
+      return stripe.redirectToCheckout({ sessionId: session.id });
+    })
+    .then(function(result) {
+      // Handle result (e.g., subscription success or failure)
+    });
+  });
+</script> -->
+
+<p>User ID: {{ user_id }}</p>
+
+<div id="paypal-button-container-P-78W163848D552845NMYW63WI"></div>
+<script
+  src="https://www.paypal.com/sdk/js?client-id=Af5egDr5T4YylPp7RMjemg6vY3wrf-nd2l4W-Kph3am-70gwPE8SxJI8JAlfrGE02pYkWrzkyEE8WDnL&vault=true&intent=subscription"
+  data-sdk-integration-source="button-factory"
+></script>
+<script>
+  paypal
+    .Buttons({
+      style: {
+        shape: "rect",
+        color: "gold",
+        layout: "vertical",
+        label: "subscribe",
+      },
+      createSubscription: function (data, actions) {
+        return actions.subscription.create({
+          /* Creates the subscription */
+          plan_id: "P-78W163848D552845NMYW63WI",
+        });
+      },
+      onApprove: function (data, actions) {
+        window.location.href = "/paypal_success?subscriptionID=" + data.subscriptionID + "&user_id={{ user_id }}";
+        alert(data.subscriptionID); // You can add optional success message for the subscriber here
+      },
+      onError: function (error) {
+          alert("Payment failed: " + error.message);
+          // Redirect to a page indicating payment failure
+          window.location.href = "/paypal_failed";
+        },
+    })
+    .render("#paypal-button-container-P-78W163848D552845NMYW63WI"); // Renders the PayPal button
+</script>

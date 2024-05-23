@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="logo">Your Logo</div>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Payments</a></li>
+          <!-- Add Payments link here -->
+        </ul>
+      </section>
+
+      <section class="content">
+        <h1>Welcome to Your Dashboard</h1>
+        <!-- Your dashboard content goes here -->
+      </section>
+    </main>
+
+    <h2>Subscription</h2>
+    <form action="/checkout" method="post">
+      <button type="submit">Subscribe Now</button>
+    </form>
+
+    <form action="/send_email" method="post">
+      <button type="submit">Send Email</button>
+    </form>
+    <footer>
+      <p>&copy; 2024 Your Company</p>
+    </footer>
+  </body>
+</html>

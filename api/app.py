@@ -392,5 +392,4 @@ def run_cron():
 # add_question_to_db(question_data)
 
 if __name__ == '__main__':
-
     app.run(debug=True)

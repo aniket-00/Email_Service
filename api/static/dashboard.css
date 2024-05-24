@@ -1,0 +1,116 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.header .logo {
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+.nav ul {
+    list-style-type: none;
+}
+
+.nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+.nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+.nav ul li a.active,
+.nav ul li a:hover {
+    color: #f0f0f0;
+}
+
+.main {
+    display: flex;
+}
+
+.sidebar {
+    background-color: #f0f0f0;
+    color: #333;
+    width: 200px;
+}
+
+.sidebar h2 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding: 20px 0 10px 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: block;
+    padding: 10px 20px;
+}
+
+.sidebar ul li a.active,
+.sidebar ul li a:hover {
+    color: #007bff;
+    background-color: #e0e0e0;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+.subscription,
+.email {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}

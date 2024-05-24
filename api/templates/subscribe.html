@@ -1,144 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscribe to Email Service</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .container {
-        text-align: center;
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      }
-      .header {
-        margin-bottom: 20px;
-        color: #333;
-        font-size: 24px;
-      }
-      .email-input {
-        padding: 15px;
-        width: 100%;
-        margin-bottom: 20px;
-        border: none;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        font-size: 16px;
-      }
-      .submit-btn {
-        padding: 15px 40px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      .submit-btn:hover {
-        background-color: #0056b3;
-      }
-      .thanks-message {
-        display: none;
-        color: #4caf50;
-        font-size: 18px;
-        margin-top: 20px;
-      }
-      .subscription-message {
-        display: none;
-        color: #cf830f;
-        font-size: 18px;
-        margin-top: 20px;
-      }
-      .fa-check-circle {
-        color: #4caf50;
-        font-size: 36px;
-        margin-bottom: 10px;
-      }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: url("/static/images/sm_art.png") no-repeat center;
+            background-size: cover;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.95); /* Lighten the background */
+            padding: 40px; /* Increase padding */
+            border-radius: 15px; /* Increase border radius */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            margin-bottom: 30px; /* Increase margin bottom */
+            color: #333;
+            font-size: 28px; /* Increase font size */
+        }
+        .email-input {
+            padding: 15px;
+            width: 90%;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+        .submit-btn {
+            padding: 15px 40px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3; /* Darken the hover color */
+        }
+        .thanks-message {
+            display: none;
+            color: #4caf50;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .subscription-message {
+            display: none;
+            color: #cf830f;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .fa-check-circle {
+            color: #4caf50;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <div class="header">Subscribe to Our Email Service</div>
-      <form id="subscribe-form">
-        <input
-          type="email"
-          id="email"
-          class="email-input"
-          placeholder="Enter your email address"
-          required
-        />
-        <br />
-        <button type="submit" class="submit-btn">Subscribe</button>
-      </form>
-      <div class="thanks-message" id="thanks-message">
-        <i class="fas fa-check-circle"></i>
-        Thanks for subscribing!
-      </div>
-      <div id="subscription-message" class="subscription-message"></div> 
+        <div class="header">Subscribe to our Email Service</div>
+        <form id="subscribe-form">
+            <input
+                type="email"
+                id="email"
+                class="email-input"
+                placeholder="Enter your email address"
+                required
+            />
+            <br />
+            <button type="submit" class="submit-btn">Subscribe</button>
+        </form>
+        <div class="thanks-message" id="thanks-message">
+            <i class="fas fa-check-circle"></i>
+            Thanks for subscribing!
+        </div>
+        <div id="subscription-message" class="subscription-message"></div> 
     </div>
 
     <script>
-      document.getElementById("subscribe-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-        var email = document.getElementById("email").value;
+        document.getElementById("subscribe-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            var email = document.getElementById("email").value;
 
-        // Make POST request to subscribe API endpoint
-        fetch("/subscribe", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email: email }),
-        })
-        .then(response => {
-            if (response.ok) {
-                // Response status is 2xx (successful)
-                return response.json();
-            } else {
-                // Response status is not 2xx (error)
-                throw new Error('Failed to subscribe. Please try again later.');
-            }
-        })
-        .then(data => {
-            // Handle successful response
-            // For example, display a success message to the user;
-            if (data.status === 'already_subscribed') {
-                document.getElementById('subscription-message').innerHTML = 'You are already subscribed to our email service.';
-                document.getElementById('subscription-message').style.display = 'block';
-            }
-            else if (data.status === 'success') {
+            // Make POST request to subscribe API endpoint
+            fetch("/subscribe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: email }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Response status is 2xx (successful)
+                    return response.json();
+                } else {
+                    // Response status is not 2xx (error)
+                    throw new Error('Failed to subscribe. Please try again later.');
+                }
+            })
+            .then(data => {
+                // Handle successful response
+                // For example, display a success message to the user;
+                if (data.status === 'already_subscribed') {
+                    document.getElementById('subscription-message').innerHTML = 'You have already subscribed to our email service.';
+                    document.getElementById('subscription-message').style.display = 'block';
+                }
+                else if (data.status === 'success') {
 
-                document.getElementById('subscription-message').innerHTML = '';
-                // Hide the subscription form
-                document.getElementById('subscribe-form').style.display = 'none';
-                
-                // Show the thanks message
-                document.getElementById('thanks-message').style.display = 'block';
-            }
-            // alert('Subscription successful!'); // Display an alert to the user
-        })
-        .catch(error => {
-            // Handle errors (e.g., network error, server error)
-            // Display an error message to the user
-            console.error('Error:', error);
-            alert('Failed to subscribe. Please try again later.');
+                    document.getElementById('subscription-message').innerHTML = '';
+                    // Hide the subscription form
+                    document.getElementById('subscribe-form').style.display = 'none';
+                    
+                    // Show the thanks message
+                    document.getElementById('thanks-message').style.display = 'block';
+                }
+                // alert('Subscription successful!'); // Display an alert to the user
+            })
+            .catch(error => {
+                // Handle errors (e.g., network error, server error)
+                // Display an error message to the user
+                console.error('Error:', error);
+                alert('Failed to subscribe. Please try again later.');
+            });
         });
-    });
     </script>
-  </body>
+</body>
 </html>

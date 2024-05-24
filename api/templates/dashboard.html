@@ -1,55 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
-    />
-  </head>
-  <body>
-    <header>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
       <div class="logo">Your Logo</div>
-      <nav>
+      <nav class="nav">
         <ul>
-          <li><a href="#">Home</a></li>
+          <li><a href="#" class="active">Home</a></li>
           <li><a href="#">Dashboard</a></li>
           <li><a href="#">Settings</a></li>
           <li><a href="#">Logout</a></li>
         </ul>
       </nav>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <section class="sidebar">
+  <main class="main">
+    <aside class="sidebar">
+      <div class="container">
         <h2>Menu</h2>
         <ul>
-          <li><a href="#">Dashboard</a></li>
+          <li><a href="#" class="active">Dashboard</a></li>
           <li><a href="#">Profile</a></li>
           <li><a href="#">Settings</a></li>
-          <li><a href="#">Payments</a></li>
-          <!-- Add Payments link here -->
+          <li><a href="/checkout">Payments</a></li>
+          <li><a href="/subscribe">Subscribe to Email</a></li>
         </ul>
-      </section>
+      </div>
+    </aside>
 
-      <section class="content">
+    <section class="content">
+      <div class="container">
         <h1>Welcome to Your Dashboard</h1>
         <!-- Your dashboard content goes here -->
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <h2>Subscription</h2>
-    <form action="/checkout" method="post">
-      <button type="submit">Subscribe Now</button>
-    </form>
+  <section class="subscription">
+    <div class="container">
+      <h2>Subscription</h2>
+      <form action="/checkout" method="get">
+        <button type="submit">Subscribe Now</button>
+      </form>
+    </div>
+  </section>
 
-    <form action="/send_email" method="post">
-      <button type="submit">Send Email</button>
-    </form>
-    <footer>
+  <section class="email">
+    <div class="container">
+      <h2>Email</h2>
+      <form action="/send_email" method="post">
+        <button type="submit">Send Email</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
       <p>&copy; 2024 Your Company</p>
-    </footer>
-  </body>
+    </div>
+  </footer>
+</body>
 </html>

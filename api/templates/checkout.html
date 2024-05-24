@@ -25,37 +25,70 @@
   });
 </script> -->
 
-<p>User ID: {{ user_id }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Page</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
 
-<div id="paypal-button-container-P-78W163848D552845NMYW63WI"></div>
-<script
-  src="https://www.paypal.com/sdk/js?client-id=Af5egDr5T4YylPp7RMjemg6vY3wrf-nd2l4W-Kph3am-70gwPE8SxJI8JAlfrGE02pYkWrzkyEE8WDnL&vault=true&intent=subscription"
-  data-sdk-integration-source="button-factory"
-></script>
+  .container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  #paypal-button-container {
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Checkout</h2>
+  <p>User ID: {{ user_id }}</p>
+  <div id="paypal-button-container"></div>
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=Af5egDr5T4YylPp7RMjemg6vY3wrf-nd2l4W-Kph3am-70gwPE8SxJI8JAlfrGE02pYkWrzkyEE8WDnL&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
 <script>
-  paypal
-    .Buttons({
-      style: {
-        shape: "rect",
-        color: "gold",
-        layout: "vertical",
-        label: "subscribe",
-      },
-      createSubscription: function (data, actions) {
-        return actions.subscription.create({
-          /* Creates the subscription */
-          plan_id: "P-78W163848D552845NMYW63WI",
-        });
-      },
-      onApprove: function (data, actions) {
-        window.location.href = "/paypal_success?subscriptionID=" + data.subscriptionID + "&user_id={{ user_id }}";
-        alert(data.subscriptionID); // You can add optional success message for the subscriber here
-      },
-      onError: function (error) {
-          alert("Payment failed: " + error.message);
-          // Redirect to a page indicating payment failure
-          window.location.href = "/paypal_failed";
-        },
-    })
-    .render("#paypal-button-container-P-78W163848D552845NMYW63WI"); // Renders the PayPal button
+  paypal.Buttons({
+    style: {
+      shape: "rect",
+      color: "gold",
+      layout: "vertical",
+      label: "subscribe",
+    },
+    createSubscription: function (data, actions) {
+      return actions.subscription.create({
+        plan_id: "P-78W163848D552845NMYW63WI",
+      });
+    },
+    onApprove: function (data, actions) {
+      window.location.href = "/paypal_success?subscriptionID=" + data.subscriptionID + "&user_id={{ user_id }}";
+      alert(data.subscriptionID);
+    },
+    onError: function (error) {
+      alert("Payment failed: " + error.message);
+      window.location.href = "/paypal_failed";
+    },
+  }).render("#paypal-button-container");
 </script>
+
+</body>
+</html>

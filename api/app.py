@@ -7,6 +7,12 @@ import os
 import urllib.parse
 from flask_pymongo import ObjectId
 from pymongo import MongoClient
+import os
+import sys
+
+venv_python_path = os.path.join(os.path.dirname(__file__), 'custom_environment', 'venv', 'bin', 'python')
+sys.path.append(venv_python_path)
+
 from datetime import datetime, timedelta
 # from flask_mail import Mail, Message
 import smtplib

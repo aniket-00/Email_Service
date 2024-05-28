@@ -2,8 +2,9 @@
   "version": 2,
   "builds": [
     {
-      "src": "Dockerfile",
-      "use": "@vercel/static-build"
+      "src": "ignored",
+      "use": "@vercel/static-build",
+      "config": { "maxLambdaSize": "500mb" }
     }
   ],
   "routes": [

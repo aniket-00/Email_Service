@@ -40,16 +40,27 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4;
+    background: url("/static/images/mesh.png") no-repeat center center fixed;
   }
 
   .container {
     max-width: 400px;
     width: 100%;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+
+  .container h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .container p {
+    margin-bottom: 20px;
+    color: #666;
   }
 
   #paypal-button-container {

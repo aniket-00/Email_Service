@@ -14,15 +14,52 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
-import re
 from jinja2 import Template
 import json
 import random
 from datetime import datetime
+import tweepy
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+import cv2
+import numpy as np
+
 # from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
+TWITTER_CLIENT_ID = os.getenv('TWITTER_CLIENT_ID')
+TWITTER_CLIENT_SECRET = os.getenv('TWITTER_CLIENT_SECRET')
+TWITTER_API_KEY = os.getenv('TWITTER_API_KEY')
+TWITTER_API_SECRET_KEY = os.getenv('TWITTER_API_SECRET_KEY')
+TWITTER_ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN')
+TWITTER_ACCESS_TOKEN_SECRET = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
+TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
+
+# try:
+#     # Authenticate using client credentials
+#     client  = tweepy.Client(
+#         consumer_key=TWITTER_API_KEY,
+#         consumer_secret=TWITTER_API_SECRET_KEY,
+#         access_token=TWITTER_ACCESS_TOKEN,
+#         access_token_secret=TWITTER_ACCESS_TOKEN_SECRET
+#         # bearer_token=TWITTER_BEARER_TOKEN
+#     )
+#     user = client.get_me(user_auth=True)
+
+#     # Print the user's screen name
+#     print(f"Authenticated as: {user.data}")
+
+#     # auth = tweepy.Client(bearer_token=TWITTER_BEARER_TOKEN)
+#     # Example: Make a request to the Twitter API v2
+#     # response = client.create_tweet(text="Hello")
+#     # print(response)
+    
+#     print("authorised")
+# except Exception as e:
+#     print(f"Error: {e}")
 
 app = Flask(__name__)
 vercel_url = os.environ.get('VERCEL_URL')
@@ -386,6 +423,234 @@ def paypal_cancel():
 def run_cron():
     send_email()
     return f"email sent by cron!", 200
+
+def format_question_for_twitter(question):
+    title = question.get("title", "No Title")
+    description = question.get("description", "No Description")
+    
+    example = question.get("examples", [{}])[0]
+    example_input = example.get("input", "No Input")
+    example_output = example.get("output", "No Output")
+    
+    constraints = ", ".join(question.get("constraints", []))
+
+    tweet = (
+        f"{title}\n\n"
+        f"{description}\n\n"
+        f"Constraints: {constraints}\n\n"
+        f"Example:\n{example_input}\nOutput: {example_output}"
+    )
+
+    # Ensure the tweet does not exceed 280 characters
+    if len(tweet) > 280:
+        # Truncate the tweet to fit within the character limit
+        tweet = tweet[:277]  # Ensure room for ellipsis
+        last_space = tweet.rfind(' ')
+        if last_space != -1:
+            tweet = tweet[:last_space]
+        tweet += "..."
+
+    return tweet
+
+
+def text_wrap(text, font, max_width):
+    lines = []
+    current_line = ""
+    words = text.split()
+
+    for word in words:
+        # Check if adding the word exceeds the max width
+        line_with_word = current_line + word + " " if current_line else word + " "
+        text_size, _ = cv2.getTextSize(line_with_word, font, 0.8, 1)
+
+        if text_size[0] > max_width:
+            # If adding the word exceeds the max width, start a new line
+            lines.append(current_line.strip())
+            current_line = word + " "
+        else:
+            current_line = line_with_word
+
+    if current_line:
+        lines.append(current_line.strip())
+
+    return lines
+
+def generate_image_from_json(question, output_file):
+    # Define the image width
+    width = 1200
+    
+    # Define font properties
+    font_face = cv2.FONT_HERSHEY_DUPLEX
+    font_scale = 0.8
+    font_color = (36, 86, 150)  # Soft blue
+    thickness = 1
+
+    # Initialize line y-coordinate and image height
+    line_y = 50
+    height = line_y
+
+    # Create a blank image
+    img = np.zeros((height, width, 3), np.uint8)
+    img.fill(255)  # Set white background
+
+    # Draw the title
+    title = question['title']
+    title_lines = text_wrap(title, font_face, width - 100)
+    for line in title_lines:
+        line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+        line_y += line_size[1] + 20
+    
+    # Adjust image height based on title height
+    height = line_y
+
+    # Draw the description
+    description = question['description']
+    description_lines = text_wrap(description, font_face, width - 100)
+    for line in description_lines:
+        line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+        line_y += line_size[1] + 20
+
+    # Adjust image height based on description height
+    height = max(height, line_y)
+
+    # Draw examples
+    examples = question['examples']
+    line_y += 50
+    for example in examples:
+        input_text = f"Input: {example['input']}"
+        output_text = f"Output: {example['output']}"
+        explanation_text = f"Explanation: {example['explanation']}"
+        
+        input_lines = text_wrap(input_text, font_face, width - 100)
+        for line in input_lines:
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+        
+        output_lines = text_wrap(output_text, font_face, width - 100)
+        for line in output_lines:
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+        
+        explanation_lines = text_wrap(explanation_text, font_face, width - 100)
+        for line in explanation_lines:
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+        
+        line_y += 20  # Add some spacing between examples
+
+    # Adjust image height based on example text
+    height = max(height, line_y)
+
+    # Draw constraints header
+    cv2.putText(img, "Constraints:", (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+    line_y += 20  # Add spacing after constraints header
+
+    # Draw constraints
+    constraints = question['constraints']
+    for constraint in constraints:
+        constraint_lines = text_wrap(constraint, font_face, width - 100)  # Adjusted width for constraints
+        for line in constraint_lines:
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+
+    # Adjust image height based on constraint text
+    height = max(height, line_y + 50)  # Add some padding at the bottom
+
+    # Create a new image with the adjusted height
+    img = np.zeros((height, width, 3), np.uint8)
+    img.fill(255)  # Set white background
+
+    # Redraw text on the new image
+    line_y = 50  # Reset line y-coordinate
+    for line in title_lines:
+        cv2.putText(img, line, (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+        line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+        line_y += line_size[1] + 20
+    
+    line_y += 50  # Add spacing after title
+    for line in description_lines:
+        cv2.putText(img, line, (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+        line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+        line_y += line_size[1] + 20
+
+    line_y += 50  # Add spacing after description
+    for example in examples:
+        input_text = f"Input: {example['input']}"
+        output_text = f"Output: {example['output']}"
+        explanation_text = f"Explanation: {example['explanation']}"
+        
+        input_lines = text_wrap(input_text, font_face, width - 100)
+        for line in input_lines:
+            cv2.putText(img, line, (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+        
+        output_lines = text_wrap(output_text, font_face, width - 100)
+        for line in output_lines:
+            cv2.putText(img, line, (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+        
+        explanation_lines = text_wrap(explanation_text, font_face, width - 100)
+        for line in explanation_lines:
+            cv2.putText(img, line, (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+        
+        line_y += 20  # Add spacing between examples
+
+    # Draw constraints header
+    cv2.putText(img, "Constraints:", (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+    line_y += 50  # Add spacing after constraints header
+
+    # Draw constraints
+    for constraint in constraints:
+        constraint_lines = text_wrap(constraint, font_face, width - 100)  # Adjusted width for constraints
+        for line in constraint_lines:
+            cv2.putText(img, line, (50, line_y), font_face, font_scale, font_color, thickness, cv2.LINE_AA)
+            line_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            line_y += line_size[1] + 20
+
+    # Save the image
+    cv2.imwrite(output_file, img)
+    return output_file
+
+@app.route("/post_tweet", methods=['POST'])
+def post_question_to_twitter():
+    # Assuming you have a function to get the question details
+    question = get_and_send_random_question()
+
+    # Format the question data as needed
+    image_path = generate_image_from_json(question, 'question_image.png')
+    return ''
+
+    auth = tweepy.OAuth1UserHandler(
+        consumer_key=TWITTER_API_KEY,
+        consumer_secret=TWITTER_API_SECRET_KEY,
+        access_token=TWITTER_ACCESS_TOKEN,
+        access_token_secret=TWITTER_ACCESS_TOKEN_SECRET
+    )
+    api = tweepy.API(auth)
+    clientV2  = tweepy.Client(
+        consumer_key=TWITTER_API_KEY,
+        consumer_secret=TWITTER_API_SECRET_KEY,
+        access_token=TWITTER_ACCESS_TOKEN,
+        access_token_secret=TWITTER_ACCESS_TOKEN_SECRET
+        # bearer_token=TWITTER_BEARER_TOKEN
+    )
+
+    # Make a request to a Twitter API v2 endpoint
+    try:
+        media = api.media_upload(image_path)
+        response = clientV2.create_tweet(media_ids=[media.media_id_string])
+        return "tweet Posted", 200
+    except Exception as e:
+        return f'Error accessing Twitter API v2: {e}', 500
+
+@app.route("/webhook/callback", methods=['POST'])
+def webhook():
+    print(request.data)
+    return "Hello World"
 
 # file_path = 'api/questions/6.json'
 # question_data = parse_question_and_answer_file(file_path)

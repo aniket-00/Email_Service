@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "ignored",
-      "use": "@vercel/static-build",
+      "use": "@vercel/docker",
       "config": { "maxLambdaSize": "500mb" }
     }
   ],

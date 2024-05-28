@@ -8,7 +8,6 @@ import urllib.parse
 from flask_pymongo import ObjectId
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
 # from flask_mail import Mail, Message
 import smtplib
 from email.mime.text import MIMEText
@@ -654,4 +653,4 @@ def webhook():
 # add_question_to_db(question_data)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)

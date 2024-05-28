@@ -9,3 +9,6 @@ flask_pymongo
 # itsdangerous
 jinja2
 # apscheduler
+opencv-python
+numpy
+tweepy

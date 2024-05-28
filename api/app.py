@@ -19,10 +19,6 @@ import json
 import random
 from datetime import datetime
 import tweepy
-from PIL import Image, ImageDraw, ImageFont
-import textwrap
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
 import cv2
 import numpy as np
 
@@ -63,6 +59,8 @@ TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
 
 app = Flask(__name__)
 vercel_url = os.environ.get('VERCEL_URL')
+if vercel_url:
+    app.config['SERVER_NAME'] = vercel_url
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' 
 password = "Tester@12345"
 username = "test"
@@ -622,7 +620,6 @@ def post_question_to_twitter():
 
     # Format the question data as needed
     image_path = generate_image_from_json(question, 'question_image.png')
-    return ''
 
     auth = tweepy.OAuth1UserHandler(
         consumer_key=TWITTER_API_KEY,

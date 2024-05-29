@@ -99,7 +99,7 @@ class User(UserMixin):
     def __init__(self, id):
         self.id = id
 
-users = {'user1': {'password': 'password1'}, 'test': {'password': 'test'}}
+users = {'test': {'password': 'Abhishek@0099'}}
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -638,9 +638,10 @@ def post_question_to_twitter():
     )
 
     # Make a request to a Twitter API v2 endpoint
+    tweet_text = f"Can you solve this Challenge!?:\n\n {question['title']}\n\nSubscribe to our newsletter to receive questions in your email for free https://www.mailego.com/subscribe"
     try:
         media = api.media_upload(image_path)
-        response = clientV2.create_tweet(media_ids=[media.media_id_string])
+        response = clientV2.create_tweet(text=tweet_text,media_ids=[media.media_id_string])
         return "tweet Posted", 200
     except Exception as e:
         return f'Error accessing Twitter API v2: {e}', 500

@@ -1,11 +1,10 @@
-flask
-flask_login
-# stripe
-mime
+Flask
+Flask_Login
+Flask_PyMongo
+Jinja2
+numpy==1.26.4
+opencv-python-headless==4.5.5.62
 pymongo
 python-dotenv
-flask_pymongo
-# werkzeug
-# itsdangerous
-jinja2
-# apscheduler
+tweepy
+Werkzeug>=2.1.2

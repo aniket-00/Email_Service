@@ -1,9 +1,10 @@
-Flask==2.2.2
-Flask_Login==0.6.3
-Flask_PyMongo==2.3.0
-Jinja2==3.1.2
+Flask
+Flask_Login
+Flask_PyMongo
+Jinja2
 numpy==1.26.4
 opencv-python-headless==4.5.5.62
-pymongo==4.7.0
-python-dotenv==1.0.1
-tweepy==4.14.0
+pymongo
+python-dotenv
+tweepy
+Werkzeug>=2.1.2

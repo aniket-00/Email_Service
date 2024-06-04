@@ -54,9 +54,6 @@ TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
 #     print(f"Error: {e}")
 
 app = Flask(__name__)
-vercel_url = os.environ.get('VERCEL_URL')
-if vercel_url:
-    app.config['SERVER_NAME'] = vercel_url
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' 
 password = "Tester@12345"
 username = "test"
@@ -99,7 +96,7 @@ class User(UserMixin):
     def __init__(self, id):
         self.id = id
 
-users = {'user1': {'password': 'password1'}, 'test': {'password': 'test'}}
+users = {'test': {'password': 'Abhishek@0099'}}
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -149,7 +146,7 @@ def send_user_email(payment_link,question, user):
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = receiver_email
-    message['Subject'] = 'Daily Morning Dose'
+    message['Subject'] = 'Can you solve this!!'
     
     # Prepare question content
     is_paid_user = user.get('subscription_status')=='paid'
@@ -185,11 +182,14 @@ def generate_payment_link(user_id):
 
 
 @app.route('/send_email', methods=['GET', 'POST'])
-def send_email():
-    with app.app_context():
-        users_list = get_users()  # Extract the 'users' list
-        # Now you can work with the 'users_list' data
-        question = get_and_send_random_question()
+def send_email(question=None):
+    with app.app_context():  
+        # check users status
+        update_subscription_status_all_users()
+        if not question:
+            question = get_and_send_random_question()
+        # Extract the 'users' list
+        users_list = get_users()
         for user in users_list:
             user_id = user.get('user_id')
             email = user.get('email')
@@ -199,6 +199,23 @@ def send_email():
             send_user_email(payment_link,question,user)
         return users_list
 
+def update_subscription_status_all_users():
+    # Get all users from the database
+    all_users = db.Users.find()
+    
+    # Get the current date
+    current_date = datetime.now()
+    
+    # Iterate through each user
+    for user in all_users:
+        # Retrieve subscription end date from the user document
+        end_date = user.get('subscription_end_date')
+        if end_date:
+            # Check if the current date is greater than the subscription end date
+            if current_date > end_date:
+                # If so, update the user's subscription status to 'free'
+                db.Users.update_one({'_id': user['_id']}, 
+                                    {'$set': {'subscription_status': 'free'}})
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -305,8 +322,9 @@ def payment_redirect():
     if user_id:
         # Retrieve user from the database using the user ID
         user = db.Users.find_one({'_id': ObjectId(user_id)})
+        username = user.get('email')
         if user:
-            return redirect(f"checkout?user_id={user_id}")  # Redirect to the payment page
+            return redirect(f"checkout?user_id={user_id}&username={username}")  # Redirect to the payment page
         else:
             return 'User not found', 404
     else:
@@ -315,7 +333,8 @@ def payment_redirect():
 @app.route('/checkout', methods=['GET'])
 def paypal_subscribe():
     user_id = request.args.get('user_id')
-    return render_template('checkout.html', user_id=user_id)
+    username = request.args.get('username')
+    return render_template('checkout.html', user_id=user_id, username=username)
 
 def save_subscription(subscription, end_date, email):
     # Access the MongoDB collection
@@ -388,18 +407,22 @@ def paypal_success():
     # Retrieve subscription ID and user ID from query parameters
     subscription_id = request.args.get('subscriptionID')
     user_id = request.args.get('user_id')
-    print(user_id)
     if user_id:
+        start_date = datetime.now()  # Subscription start date
+        end_date = start_date + timedelta(days=30)
         # Retrieve user from the database using the user ID
         user = db.Users.find_one({'_id': ObjectId(user_id)})
         if user:
             # Update user's subscription status in the database
-            db.Users.update_one({'_id': ObjectId(user_id)}, {'$set': {'subscription_status': 'paid'}})
+            db.Users.update_one({'_id': ObjectId(user_id)}, 
+                                {'$set': {'subscription_status': 'paid',
+                                          'subscription_start_date': start_date,
+                                          'subscription_end_date': end_date}})
             return render_template('checkout_success.html')
     
     # Handle successful payment and update user's subscription status
     # For example, you can render a success template with a success message
-    return "Unexpected issue, you paymnet is done, you can securly checkoutt"
+    return "Unexpected issue, you paymnet is done, you can securly checkout"
     
 
 @app.route('/paypal_failed')
@@ -415,16 +438,18 @@ def paypal_cancel():
 
 @app.route('/api/cron')
 def run_cron():
-    send_email()
+    question = get_and_send_random_question()
+    send_email(question)
+    post_question_to_twitter(question)
     return f"email sent by cron!", 200
 
 def format_question_for_twitter(question):
-    title = question.get("title", "No Title")
-    description = question.get("description", "No Description")
+    title = question.get("title", "")
+    description = question.get("description", "")
     
     example = question.get("examples", [{}])[0]
-    example_input = example.get("input", "No Input")
-    example_output = example.get("output", "No Output")
+    example_input = example.get("input", "")
+    example_output = example.get("output", "")
     
     constraints = ", ".join(question.get("constraints", []))
 
@@ -613,9 +638,10 @@ def generate_image_from_json(question, output_file):
     return output_file
 
 @app.route("/post_tweet", methods=['POST'])
-def post_question_to_twitter():
+def post_question_to_twitter(question=None):
     # Assuming you have a function to get the question details
-    question = get_and_send_random_question()
+    if not question:
+        question = get_and_send_random_question()
 
     # Format the question data as needed
     image_path = generate_image_from_json(question, 'question_image.png')
@@ -638,9 +664,10 @@ def post_question_to_twitter():
     )
 
     # Make a request to a Twitter API v2 endpoint
+    tweet_text = f"Can you solve this Challenge!?:\n\n {question['title']}\n\nSubscribe to our newsletter to receive questions in your email for free https://www.mailego.com/subscribe"
     try:
         media = api.media_upload(image_path)
-        response = clientV2.create_tweet(media_ids=[media.media_id_string])
+        response = clientV2.create_tweet(text=tweet_text,media_ids=[media.media_id_string])
         return "tweet Posted", 200
     except Exception as e:
         return f'Error accessing Twitter API v2: {e}', 500

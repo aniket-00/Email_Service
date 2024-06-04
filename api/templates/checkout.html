@@ -27,79 +27,92 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout Page</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: url("/static/images/mesh.png") no-repeat center center fixed;
-  }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: url("/static/images/mesh.png") no-repeat center center fixed;
+      }
 
-  .container {
-    max-width: 400px;
-    width: 100%;
-    padding: 30px;
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-  }
+      .container {
+        max-width: 400px;
+        width: 100%;
+        padding: 30px;
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.7
+        ); /* Slightly transparent white */
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
 
-  .container h2 {
-    margin-bottom: 20px;
-    color: #333;
-  }
+      .container h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
 
-  .container p {
-    margin-bottom: 20px;
-    color: #666;
-  }
+      .container p {
+        margin-bottom: 20px;
+        color: #666;
+      }
 
-  #paypal-button-container {
-    text-align: center;
-  }
-</style>
-</head>
-<body>
+      #paypal-button-container {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Checkout</h2>
+      <p>User: {{ username }}</p>
+      <!-- <div id="paypal-button-container"></div> -->
+      <div id="paypal-button-container-P-1JH78454Y6909200XMZM2O4Y"></div>
+    </div>
 
-<div class="container">
-  <h2>Checkout</h2>
-  <p>User ID: {{ user_id }}</p>
-  <div id="paypal-button-container"></div>
-</div>
-
-<script src="https://www.paypal.com/sdk/js?client-id=Af5egDr5T4YylPp7RMjemg6vY3wrf-nd2l4W-Kph3am-70gwPE8SxJI8JAlfrGE02pYkWrzkyEE8WDnL&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-<script>
-  paypal.Buttons({
-    style: {
-      shape: "rect",
-      color: "gold",
-      layout: "vertical",
-      label: "subscribe",
-    },
-    createSubscription: function (data, actions) {
-      return actions.subscription.create({
-        plan_id: "P-78W163848D552845NMYW63WI",
-      });
-    },
-    onApprove: function (data, actions) {
-      window.location.href = "/paypal_success?subscriptionID=" + data.subscriptionID + "&user_id={{ user_id }}";
-      alert(data.subscriptionID);
-    },
-    onError: function (error) {
-      alert("Payment failed: " + error.message);
-      window.location.href = "/paypal_failed";
-    },
-  }).render("#paypal-button-container");
-</script>
-
-</body>
+    <script
+      src="https://www.paypal.com/sdk/js?client-id=AYcp44hMD4_tM4sI8awh24Qb2lrbPSMoTmObH9yBODkE9rQqL-Jz_mDrc7cJN-o199gazwuCQu6uoqgs&vault=true&intent=subscription"
+      data-sdk-integration-source="button-factory"
+    ></script>
+    <script>
+      paypal
+        .Buttons({
+          style: {
+            shape: "rect",
+            color: "gold",
+            layout: "vertical",
+            label: "subscribe",
+          },
+          createSubscription: function (data, actions) {
+            return actions.subscription.create({
+              /* Creates the subscription */
+              plan_id: "P-1JH78454Y6909200XMZM2O4Y",
+            });
+          },
+          onApprove: function (data, actions) {
+            window.location.href =
+              "/paypal_success?subscriptionID=" +
+              data.subscriptionID +
+              "&user_id={{ user_id }}";
+            alert(data.subscriptionID);
+          },
+          onError: function (error) {
+            alert("Payment failed: " + error.message);
+            window.location.href = "/paypal_failed";
+          },
+        })
+        .render("#paypal-button-container-P-1JH78454Y6909200XMZM2O4Y"); // Renders the PayPal button
+    </script>
+  </body>
 </html>

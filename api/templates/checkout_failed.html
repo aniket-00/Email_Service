@@ -4,13 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout Failed</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background: url("/static/images/icon-1.jpg") no-repeat center center fixed; /* Add your background image URL here */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(34, 34, 34, 0.7); /* Dark background with slight transparency */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, p {
+            margin: 10px 0;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Payment Failed</h1>
         <p>Unfortunately, your payment could not be processed at this time. Please try again later.</p>
-        <a href="/dashboard">Try Again</a>
     </div>
 </body>
 </html>

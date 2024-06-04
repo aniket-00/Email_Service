@@ -4,13 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout Success</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body { /* Light blue with reduced opacity */
+            background-color: rgb(255, 255, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url("/static/images/icon-1.jpg") no-repeat center center fixed;
+        }
+        .container {
+            text-align: center;
+            color: rgb(255, 255, 255);
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(34, 34, 34, 0.7); /* Dark background with slight transparency */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, p {
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Payment Successful</h1>
-        <p>Your subscription is now active.</p>
-        <a href="/">Back to Dashboard</a>
+        <h1><b>Payment Successful</b></h1>
+        <p><b>Your subscription is now active.</b></p>
     </div>
 </body>
 </html>

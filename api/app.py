@@ -55,10 +55,6 @@ ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 #     print(f"Error: {e}")
 
 app = Flask(__name__)
-if ENVIRONMENT == 'preview':
-    app.config['SERVER_NAME'] = 'dev.mailego.com'
-elif ENVIRONMENT == 'production':
-    app.config['SERVER_NAME'] = 'mailego.com'
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' 
 password = "Tester@12345"
@@ -85,6 +81,16 @@ db = client.Email_Service  # Replace 'test_database' with your actual database n
 # db = SQLAlchemy(app)
 app.static_folder = 'static'
 app.template_folder = 'templates'
+
+@app.before_request
+def before_request():
+    if ENVIRONMENT == 'preview':
+        app.config['SERVER_NAME'] = 'dev.mailego.com'
+    if ENVIRONMENT == 'production':
+        app.config['SERVER_NAME'] = 'mailego.com'
+    else:
+        host = request.host
+        app.config['SERVER_NAME'] = host 
 
 @app.route('/')
 def home():

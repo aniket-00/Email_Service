@@ -29,7 +29,7 @@ TWITTER_API_SECRET_KEY = os.getenv('TWITTER_API_SECRET_KEY')
 TWITTER_ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN')
 TWITTER_ACCESS_TOKEN_SECRET = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
 TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
-ENVIRONMENT = os.getenv('ENVIRONMENT')
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 # try:
 #     # Authenticate using client credentials
@@ -57,8 +57,9 @@ ENVIRONMENT = os.getenv('ENVIRONMENT')
 app = Flask(__name__)
 if ENVIRONMENT == 'preview':
     app.config['SERVER_NAME'] = 'dev.mailego.com'
-if ENVIRONMENT == 'production':
+elif ENVIRONMENT == 'production':
     app.config['SERVER_NAME'] = 'mailego.com'
+
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' 
 password = "Tester@12345"
 username = "test"

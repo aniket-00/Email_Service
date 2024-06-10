@@ -29,6 +29,7 @@ TWITTER_API_SECRET_KEY = os.getenv('TWITTER_API_SECRET_KEY')
 TWITTER_ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN')
 TWITTER_ACCESS_TOKEN_SECRET = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
 TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
+ENVIRONMENT = os.getenv('ENVIRONMENT')
 
 # try:
 #     # Authenticate using client credentials
@@ -54,6 +55,10 @@ TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
 #     print(f"Error: {e}")
 
 app = Flask(__name__)
+if ENVIRONMENT == 'preview':
+    app.config['SERVER_NAME'] = 'dev.mailego.com'
+if ENVIRONMENT == 'production':
+    app.config['SERVER_NAME'] = 'mailego.com'
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' 
 password = "Tester@12345"
 username = "test"
@@ -661,11 +666,12 @@ def post_question_to_twitter(question=None):
         access_token_secret=TWITTER_ACCESS_TOKEN_SECRET
         # bearer_token=TWITTER_BEARER_TOKEN
     )
-
     # Make a request to a Twitter API v2 endpoint
-    tweet_text = f"Can you solve this Challenge??:\n\n {question['title']}\n\nReady to elevate your career to new heights? Click the link below to join or daily challenge! https://www.mailego.com/subscribe\n\n #coding 
-        #DSA #100DaysOfCode #programming #algorithm #codingChallenge #tech #learnToCode #devCommunity #CodeNewbie #developer #codingLife #softwareEngineering #DataStructures 
-        # #Algorithms #TechChallenge #CodeDaily #ProblemSolving #LeetCode #Hackerrank"
+    tweet_text = f"Can you solve this Challenge??\n\n {question['title']}\n\n" \
+             "Ready to elevate your career to new heights? Click the link below to join our daily challenge! " \
+             "https://www.mailego.com/subscribe\n\n" \
+             "#coding #DSA #100DaysOfCode #programming #algorithm #codingChallenge"
+
     try:
         media = api.media_upload(image_path)
         response = clientV2.create_tweet(text=tweet_text,media_ids=[media.media_id_string])

@@ -361,7 +361,6 @@ def parse_question_and_answer_file(file_path):
 def add_question_to_db(question_data):
     questions_collection = db['questions']
     questions_collection.insert_one(question_data)
-    client.close()
 
 @app.route('/questions/<question_id>', methods=['GET'])
 def get_question(question_id):
@@ -664,7 +663,9 @@ def post_question_to_twitter(question=None):
     )
 
     # Make a request to a Twitter API v2 endpoint
-    tweet_text = f"Can you solve this Challenge!?:\n\n {question['title']}\n\nSubscribe to our newsletter to receive questions in your email for free https://www.mailego.com/subscribe"
+    tweet_text = f"Can you solve this Challenge??:\n\n {question['title']}\n\nReady to elevate your career to new heights? Click the link below to join or daily challenge! https://www.mailego.com/subscribe\n\n #coding 
+        #DSA #100DaysOfCode #programming #algorithm #codingChallenge #tech #learnToCode #devCommunity #CodeNewbie #developer #codingLife #softwareEngineering #DataStructures 
+        # #Algorithms #TechChallenge #CodeDaily #ProblemSolving #LeetCode #Hackerrank"
     try:
         media = api.media_upload(image_path)
         response = clientV2.create_tweet(text=tweet_text,media_ids=[media.media_id_string])
@@ -677,9 +678,25 @@ def webhook():
     print(request.data)
     return "Hello World"
 
-# file_path = 'api/questions/6.json'
-# question_data = parse_question_and_answer_file(file_path)
-# add_question_to_db(question_data)
+
+
+@app.route("/post_question")
+def upload_question():
+    folder_path = 'api/questions/'
+    files = os.listdir(folder_path)
+    
+    for file_name in files:
+        # Step 2: Iterating Over Files
+        file_path = os.path.join(folder_path, file_name)
+        print(file_path)
+        
+        if os.path.isfile(file_path):
+            # Step 3: Processing Each File
+            question_data = parse_question_and_answer_file(file_path)
+            
+            # Step 4: Adding Data to Database
+            add_question_to_db(question_data)
+    return "Upload success"
 
 if __name__ == '__main__':
     app.run(debug=True)

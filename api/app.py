@@ -82,16 +82,6 @@ db = client.Email_Service  # Replace 'test_database' with your actual database n
 app.static_folder = 'static'
 app.template_folder = 'templates'
 
-@app.before_request
-def before_request():
-    if ENVIRONMENT == 'preview':
-        app.config['SERVER_NAME'] = 'dev.mailego.com'
-    # if ENVIRONMENT == 'production':
-    #     app.config['SERVER_NAME'] = 'mailego.com'
-    else:
-        host = request.host
-        app.config['SERVER_NAME'] = host 
-
 @app.route('/')
 def home():
     return render_template('home.html', login_url='login')

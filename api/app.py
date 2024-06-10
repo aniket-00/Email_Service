@@ -86,8 +86,8 @@ app.template_folder = 'templates'
 def before_request():
     if ENVIRONMENT == 'preview':
         app.config['SERVER_NAME'] = 'dev.mailego.com'
-    if ENVIRONMENT == 'production':
-        app.config['SERVER_NAME'] = 'mailego.com'
+    # if ENVIRONMENT == 'production':
+    #     app.config['SERVER_NAME'] = 'mailego.com'
     else:
         host = request.host
         app.config['SERVER_NAME'] = host 

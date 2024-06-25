@@ -441,7 +441,7 @@ def paypal_cancel():
 def run_cron():
     question = get_and_send_random_question()
     send_email(question)
-    post_question_to_twitter(question)
+    # post_question_to_twitter(question)
     return f"email sent by cron!", 200
 
 def format_question_for_twitter(question):
